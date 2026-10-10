@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # MemoriaTripera
 
 1) Carlos Esteban Alaye Dematti
@@ -75,3 +76,6 @@
 73) Mario Enrique Salerno Hernández
 74) Edda Elba Vega Ferretti
 75) Ricardo Osvaldo Vega Ferretti
+=======
+# MemoriaTripera_2026
+>>>>>>> 75cae27c2012fcd059ad0d013ea4e974a5837f59
