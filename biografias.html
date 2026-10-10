@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biografias</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="nav.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<header class="encabezado">
+    <img class="encabezado-rasgado" src="recursos/Header.svg" alt="" aria-hidden="true">
+    <div class="contenido-header">
+        <div class="logo">
+            <img src="recursos/logo2.png" alt="Logo">
+        </div>
+        <button class="nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false" aria-label="Abrir menú de navegación">
+            <span class="nav-toggle-label">Menú</span>
+            <span class="nav-toggle-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <nav class="navbar" id="primary-navigation" aria-label="Navegación principal">
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="biografias.html">Biografías</a></li>
+                <li><a href="notas.html">Malvinas</a></li>
+                <li><a href="nosotros.html">¿Quiénes somos?</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+    <section class="contenido">
+        <h2 class="titulo-introbio">
+            Llevamos reconstruidas 75 biografías
+        </h2>
+
+        <div class="contenedor-principal">
+
+            <aside class="sidebar">
+
+                <h3>Filtrar</h3>
+
+                <!-- buscador -->
+                <div class="bloque-filtro">
+                    <label for="buscador">Buscar por nombre</label>
+                    <input type="text" id="buscador" placeholder="Ej: Carlos Pérez">
+                </div>
+
+                <details class="filtros-avanzados" id="filtros-avanzados">
+                    <summary>Ver más filtros</summary>
+                    <div class="filtros-avanzados-contenido">
+                <!-- Nacimiento -->
+                <div class="bloque-filtro">
+                    <label for="filtro-nacimiento">Nacimiento</label>
+                    <select id="filtro-nacimiento">
+                        <option value="">-- Todos --</option>
+                    </select>
+                </div>
+
+                <!-- Primarios -->
+                <div class="bloque-filtro">
+                    <label for="filtro-primarios">Primarios</label>
+                    <select id="filtro-primarios">
+                        <option value="">-- Todos --</option>
+                    </select>
+                </div>
+
+                <!-- Secundarios -->
+                <div class="bloque-filtro">
+                    <label for="filtro-secundarios">Secundarios</label>
+                    <select id="filtro-secundarios">
+                        <option value="">-- Todos --</option>
+                    </select>
+                </div>
+
+                <!-- Estudios Superiores -->
+                <div class="bloque-filtro">
+                    <label for="filtro-superiores">Estudios Superiores</label>
+                    <select id="filtro-superiores">
+                        <option value="">-- Todos --</option>
+                    </select>
+                </div>
+
+                <!-- Militancia -->
+                <div class="bloque-filtro">
+                    <label for="filtro-militancia">Militancia</label>
+                    <select id="filtro-militancia">
+                        <option value="">-- Todos --</option>
+                    </select>
+                </div>
+
+                <!-- Deporte -->
+                <div class="bloque-filtro">
+                    <label for="filtro-deporte">Deporte</label>
+                    <select id="filtro-deporte">
+                        <option value="">-- Todos --</option>
+                    </select>
+                </div>
+
+                <!-- Instituciones -->
+                <div class="bloque-filtro">
+                    <label for="filtro-instituciones">Instituciones</label>
+                    <select id="filtro-instituciones">
+                        <option value="">-- Todos --</option>
+                    </select>
+                </div>
+
+                <!-- Centros Clandestinos de Detención -->
+                <div class="bloque-filtro">
+                    <label for="filtro-ccdd">Centros Clandestinos de Detención</label>
+                    <select id="filtro-ccdd">
+                        <option value="">-- Todos --</option>
+                    </select>
+                </div>
+
+                <!-- Asesinato/Secuestro -->
+                <div class="bloque-filtro">
+                    <label for="filtro-victima">ASESINATO/SECUESTRO</label>
+                    <select id="filtro-victima">
+                        <option value="">-- Todos --</option>
+                    </select>
+                </div>
+
+                <button class="btn-reset">Resetear filtros</button>
+                    </div>
+                </details>
+
+            </aside>
+
+            <template id="card-template">
+                <div class="card">
+                    <div class="card-click">
+                        <img src="" alt="">
+                        <h3></h3>
+                    </div>
+                </div>
+            </template>
+            <section class="grid-biografias" id="grid">
+            </section>
+        </div> <!-- cierre contenedor-principal -->
+    </section> <!-- cierre contenido -->
+</main>
+
+<footer>
+    <div class="footer-line"></div>
+    <div class="footer-content">
+        <img src="recursos/ddhh.png" alt="Logo" class="footer-logo" />
+        <div class="social-icons">
+            <a href="https://www.instagram.com/subcomisionddhhcge/" aria-label="Instagram" class="icon instagram" target="_blank" rel="noopener noreferrer">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="#0F4170" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm4.5-2.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+                </svg>
+            </a>
+            <a href="https://www.youtube.com/@subcomisionderechoshumanos3840" aria-label="YouTube" class="icon youtube" target="_blank" rel="noopener noreferrer">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="#0F4170" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M19.8 7.2a2.41 2.41 0 0 0-1.7-1.7C16.5 5 12 5 12 5s-4.5 0-6.1.5a2.41 2.41 0 0 0-1.7 1.7A25.42 25.42 0 0 0 4 12a25.42 25.42 0 0 0 .2 4.8 2.41 2.41 0 0 0 1.7 1.7c1.6.5 6.1.5 6.1.5s4.5 0 6.1-.5a2.41 2.41 0 0 0 1.7-1.7A25.42 25.42 0 0 0 20 12a25.42 25.42 0 0 0-.2-4.8zM10 15.5v-7l6 3.5-6 3.5z" />
+                </svg>
+            </a>
+        </div>
+    </div>
+</footer>
+
+<script src="biografias.js"></script>
+</body>
+</html>

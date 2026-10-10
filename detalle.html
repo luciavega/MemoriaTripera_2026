@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biografía</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="nav.js" defer></script>
+    <script src="glosario.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400&display=swap" rel="stylesheet">
+    <style>
+        /* Tooltip */
+        .tooltip {
+            font-weight: bold;
+            color: #242750;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .tooltiptext {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 5px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            width: max-content;
+            max-width: 250px;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* BIO */
+        .bio-header {
+            margin: 2rem auto 0;
+            max-width: 90vw;
+            text-align: center;
+        }
+
+        .bio-top {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .bio-img {
+            max-width: 300px;
+            width: 100%;
+            height: auto;
+        }
+
+        .bio-info {
+            text-align: left;
+            font-size: 1.2rem;
+        }
+
+        #bio-id {
+            font-family: 'Vanguard CF SemiBold', sans-serif;
+            font-size: 2.8rem;
+            color: #242750;
+        }
+
+        #bio-subtitulo {
+            margin-top: 0.3rem;
+            font-style: italic;
+        }
+
+        #bio-texto {
+            margin-top: 2rem;
+            white-space: pre-wrap;
+            text-align: justify;
+            width: 100%;
+            font-family: 'The Seasons', Georgia, serif;
+            font-size: 1.1rem;
+        }
+
+        .bio-video-embed {
+            width: min(100%, 760px);
+            max-width: 100%;
+            aspect-ratio: 16 / 9;
+            height: auto;
+            margin: 30px auto 10px;
+            display: block;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .bio-nav {
+            margin: 4rem 0 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            gap: 1rem;
+        }
+
+        .bio-nav-link {
+            min-width: 220px;
+            border: 2px solid #242750;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: #242750;
+            font-family: 'Public Sans', sans-serif;
+            font-size: 1rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.88);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .bio-nav-link:hover,
+        .bio-nav-link:focus-visible {
+            background: #242750;
+            color: #fff;
+            outline: none;
+        }
+
+        .bio-nav-link[aria-disabled="true"] {
+            pointer-events: none;
+            border-color: #9fb0bf;
+            color: #7b8a98;
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Responsive: título/subtítulo debajo de la imagen en móvil */
+        @media (max-width: 768px) {
+            .bio-top {
+                flex-direction: column;
+                align-items: center;
+            }
+            .bio-info {
+                text-align: center;
+            }
+
+            .bio-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .bio-nav-link {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .bio-video-embed {
+                width: 100%;
+                max-width: 100%;
+                margin: 20px auto 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="encabezado">
+    <img class="encabezado-rasgado" src="recursos/Header.svg" alt="" aria-hidden="true">
+    <div class="contenido-header">
+        <div class="logo">
+            <img src="recursos/logo2.png" alt="Logo">
+        </div>
+        <button class="nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false" aria-label="Abrir menú de navegación">
+            <span class="nav-toggle-label">Menú</span>
+            <span class="nav-toggle-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <nav class="navbar" id="primary-navigation" aria-label="Navegación principal">
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="biografias.html">Biografías</a></li>
+                <li><a href="notas.html">Malvinas</a></li>
+                <li><a href="nosotros.html">¿Quiénes somos?</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main id="detalle-container">
+</main>
+
+<dialog class="bio-image-dialog" id="bio-image-dialog" aria-label="Fotografía ampliada">
+    <button class="bio-image-close" id="bio-image-close" type="button" aria-label="Cerrar fotografía">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <img id="bio-image-full" alt="">
+</dialog>
+
+<script>
+const params = new URLSearchParams(location.search);
+const id = params.get('id');
+const visorFoto = document.getElementById('bio-image-dialog');
+const fotoCompleta = document.getElementById('bio-image-full');
+
+document.getElementById('bio-image-close').addEventListener('click', () => visorFoto.close());
+visorFoto.addEventListener('click', event => {
+    if (event.target === visorFoto) visorFoto.close();
+});
+document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && visorFoto.open) {
+        event.preventDefault();
+        visorFoto.close();
+    }
+});
+
+function construirLinkNavegacion(persona, textoFallback) {
+    if (!persona) {
+        return `<span class="bio-nav-link" aria-disabled="true" role="link">${textoFallback}</span>`;
+    }
+
+    return `<a class="bio-nav-link" href="detalle.html?id=${encodeURIComponent(persona.id)}">${textoFallback}</a>`;
+}
+
+// Cargar aca los videos por ID. Si no hay src, no se renderiza nada
+const videosPorId = {
+    'alaye-dematti-carlos-esteban': {
+        src: 'https://www.youtube.com/embed/YyYmKBZ2qaM?list=PL5lB4sns5dJUWznzPadUoEehXe8pWdFSR',
+        title: 'Carlos Esteban Alaye Dematti | Socio Honorario de Gimnasia'
+    },
+    'amuchastegui-messina-gladys-mabel': {
+        src: 'https://www.youtube.com/embed/Dxs99ndSwMQ?si=dhrUdi1eV1ztyZSj',
+        title: 'Gladys Mabel Amuchastegui Messina | Socia Honorario de Gimnasia'
+    },
+    'arrua-lavochnik-nestor-edgardo': {
+        src: 'https://www.youtube.com/embed/mya_BGbgetE?si=_c4nwLyKKs47YAD6',
+        title: 'Nestor Edgardo Arrua Lavochnik | Socio Honorario de Gimnasia'
+    },
+    'attademo-abigail-armando': {
+        src: 'https://www.youtube.com/embed/0TmEo3mkq0k?si=QD8hlEzJPShJAq2p',
+        title: 'Abigail Armando Attademo | Socio Honorario de Gimnasia'
+    },
+    'axat-demarchi-rodolfo-jorge': {
+        src: 'https://www.youtube.com/embed/oncUabvPDd0?si=bG26VZwxWF14mwyC',
+        title: 'Rodolfo Jorge Axat Demarchi | Socio Honorario de Gimnasia'
+    },
+    'bacchini-gomila-hector-federico': {
+        src: 'https://www.youtube.com/embed/5S8xiFKPQIg?si=OWoCyg0Idd0e9pvu',
+        title: 'Hector Federico Bacchini Gomila | Socio Honorario de Gimnasia'
+    },
+    'balut-gianini-pablo-alberto': {
+        src: 'https://www.youtube.com/embed/qGUDl-AU7V0?si=7XpZEBtajqL4BNNn',
+        title: 'Pablo Alberto Balut Gianini | Socio Honorario de Gimnasia'
+    },
+    'benitez-mallada-pedro-ramon': {
+        src: 'https://www.youtube.com/embed/Si8cGl2sETo?si=puX854gtakSpj-Uh',
+        title: 'Pedro Ramon Benitez Mallada | Socio Honorario de Gimnasia'
+    },
+    'benitez-reguera-julio-fabian': {
+        src: 'https://www.youtube.com/embed/J8DHBcHZdWA?si=luUGCUeTuYA7FOQx',
+        title: 'Julio Fabian Benitez Reguera | Socio Honorario de Gimnasia'
+    },
+    'bossio-urriza-alberto-oscar': {
+        src: 'https://www.youtube.com/embed/CFz-yYJZTV4?si=GOePsP22LbPZIP6A',
+        title: 'Alberto Oscar Bossio Urriza | Socio Honorario de Gimnasia'
+    },
+     'brawerman-zeff-alfredo-oscar': {
+        src: 'https://www.youtube.com/embed/FLsTwAe15iU?si=4W03C5DImwDr67tE',
+        title: 'Alfredo Oscar Brawerman Zeff | Socio Honorario de Gimnasia'
+    },
+    'carrera-tomatti-eduardo': {
+        src: 'https://www.youtube.com/embed/7sHD6vm4rW4?si=tT40Y-KoLvXW9Rh_',
+        title: 'Eduardo Carrera Tomatti | Socio Honorario de Gimnasia'
+    },
+     'carrera-tomatti-ricardo-raul': {
+        src: 'https://www.youtube.com/embed/7sHD6vm4rW4?si=tT40Y-KoLvXW9Rh_',
+        title: 'Ricardo Raul Carrera Tomatti | Socio Honorario de Gimnasia'
+    },
+    'ciancio-alegre-luis-alberto': {
+        src: 'https://www.youtube.com/embed/beSQ8TOyxfE?si=gzixdyXflaXPLsA0',
+        title: 'Luis Alberto Ciancio Alegre | Socio Honorario de Gimnasia'
+    },
+    'cena-campanaro-jorge-nestor': {
+        src: 'https://www.youtube.com/embed/9vGaJntHbcM?si=HDoozH9oXUJ-UmDX',
+        title: 'Jorge Nestor Cena Campanaro | Socio Honorario de Gimnasia'
+    },
+     'corsiglia-daniele-hugo-arnaldo': {
+        src: 'https://www.youtube.com/embed/TCgthVL6v5c?si=6Y5HZ80ad256Brc6',
+        title: 'Daniele Hugo Arnaldo Corsiglia | Socio Honorario de Gimnasia'
+    },
+    'delicostas-echarri-jorge-ruben': {
+        src: 'https://www.youtube.com/embed/_Dq1ZUe-l78?si=ZJ8IGlpbrJJtJ-QW',
+        title: 'Jorge Ruben Delicostas Echarri | Socio Honorario de Gimnasia'
+    },
+    'de-livano-jorge-corina': {
+        src: 'https://www.youtube.com/embed/Ux7_baYPSxQ?si=cjrjfpWHVf3x0f4C',
+        title: 'Albarracin Corina De Liviano Jorge | Socia Honorario de Gimnasia'
+    },
+     'de-marco-busciacco-ambrosio-francisco': {
+        src: 'https://www.youtube.com/embed/vxqAr9dORbo?si=kcMIZoX2HMIIa7cn',
+        title: 'Francisco De Marco Busciacco Ambrosio | Socio Honorario de Gimnasia'
+    },
+    'del-buono-alba-rosa-estela': {
+        src: 'https://www.youtube.com/embed/y0b1dgXy4JY?si=nd2VKUdl0u4HcuGI',
+        title: 'Alba Rosa Estela Del Buono | Socia Honorario de Gimnasia'
+    },
+     'di-bastiano-curcio-guillermo-ruben': {
+        src: 'https://www.youtube.com/embed/mya_BGbgetE?si=VcqaIL96dhtZTytX',
+        title: 'Guillermo Ruben Di Bastiano Curcio | Socio Honorario de Gimnasia'
+    },
+    'di-giacinti-torrillas-julio-cesar': {
+        src: 'https://www.youtube.com/embed/4P-oBZDmrFg?si=n3gLFZ2bUwDnCk39',
+        title: 'Julio Cesar Di Giacinti Torrillas | Socio Honorario de Gimnasia'
+    },
+     'disalvo-di-francesco-pedro-alfredo': {
+        src: 'https://www.youtube.com/embed/8kiddsWM9wc?si=0vnyh3ZACOtvs4xv',
+        title: 'Pedro Alfredo Disalvo Di Francesco | Socio Honorario de Gimnasia'
+    },
+    'falcone-mendez-maria-claudia': {
+        src: 'https://www.youtube.com/embed/HdDKcLP5rQI?si=OLV9jCtJRT87m07A',
+        title: 'Maria Claudia Falcone Mendez | Socia Honorario de Gimnasia'
+    },
+     'fonseca-cuenca-nestor-narciso': {
+        src: 'https://www.youtube.com/embed/XufFa6IyWQM?si=h53hcTCA3tFjg8K5',
+        title: 'Nestor Narciso Fonseca Cuenca | Socio Honorario de Gimnasia'
+    },
+    'fueyo-pedraza-roberto-rene': {
+        src: 'https://www.youtube.com/embed/KFhe2sBichc?si=1Ykfl1psYHDlueEL',
+        title: 'Roberto Rene Fueyo Pedraza | Socio Honorario de Gimnasia'
+    },
+     'giglio-valli-carlos-alberto': {
+        src: 'https://www.youtube.com/embed/fCK12iRqcwQ?si=wZ2WS3iA62G0AVkG',
+        title: 'Carlos Alberto Giglio Valli | Socio Honorario de Gimnasia'
+    },
+    'guadix-vignau-gervasio-martin': {
+        src: 'https://www.youtube.com/embed/gl3O0Kn0lcs?si=ZuP5T6IyjKVAe0e8',
+        title: 'Gervasio Martin Guadix Vignau | Socio Honorario de Gimnasia'
+    },
+     'guzner-lorenzo-ana-maria': {
+        src: 'https://www.youtube.com/embed/h7OxfCxyf8s?si=mLlYWNanKyH4ddqr',
+        title: 'Ana Maria Guzner Lorenzo | Socia Honorario de Gimnasia'
+    },
+    'itzigsohn-naymark-matilde': {
+        src: 'https://www.youtube.com/embed/3y3_pv318VI?si=hNpCJNTKi1dlT-co',
+        title: 'Matilde Itzigsohn Naymark | Socia Honorario de Gimnasia'
+    },
+     'jauregui-juan-martin': {
+        src: 'https://www.youtube.com/embed/or7fRhbUMoQ?si=j6PdUOlHy54ZcF7H',
+        title: 'Juan Martin Jauregui | Socio Honorario de Gimnasia'
+    },
+    'lara-perez-guillermo-antonio': {
+        src: 'https://www.youtube.com/embed/EEKe5Eab3xk?si=G_G_AEto2E6ve_YU',
+        title: 'Guillermo Antonio Lara Perez | Socio Honorario de Gimnasia'
+    },
+     'larcamon-garcia-amelia-ercilia': {
+        src: 'https://www.youtube.com/embed/IgMrFC7IrqU?si=Kga0NTKztZ1AgG-E',
+        title: 'Amelia Ercilia Larcamon Garcia | Socia Honorario de Gimnasia'
+    },
+    'logiurato-alvarez-haroldo-santos': {
+        src: 'https://www.youtube.com/embed/JDOEP2T9hZE?si=eK0v3g568eWN6Cdh',
+        title: 'Haroldo Santos Logiurato Alvarez | Socio Honorario de Gimnasia'
+    },
+     'logiurato-alvarez-luis-maria': {
+        src: 'https://www.youtube.com/embed/JDOEP2T9hZE?si=eK0v3g568eWN6Cdh',
+        title: 'Luis Maria Logiurato Alvarez | Socio Honorario de Gimnasia'
+    },
+    'logiurato-diaz-fabian-haroldo': {
+        src: 'https://www.youtube.com/embed/JDOEP2T9hZE?si=eK0v3g568eWN6Cdh',
+        title: 'Fabian Haroldo Logiurato Diaz | Socio Honorario de Gimnasia'
+    },
+     'lopez-muntaner-francisco-bartolome': {
+        src: 'https://www.youtube.com/embed/Mw7jTzaEyAI?si=E3ffi3eyCSRt2vlF',
+        title: 'Francisco Bartolome Lopez Muntaner | Socio Honorario de Gimnasia'
+    },
+     'loyola-gonzalez-de-paz-luisa-mabel': {
+        src: 'https://www.youtube.com/embed/fF5_OorID5w?si=yQNbIg311E4Shnrv',
+        title: 'Luisa Mabel Loyola Gonzalez de Paz | Socia Honorario de Gimnasia'
+    },
+    'matamoros-lopez-julio-alberto': {
+        src: 'https://www.youtube.com/embed/q7uOocVduKc?si=aW2ruxHEDrwobWxe',
+        title: 'Julio Alberto Matamoros Lopez | Socio Honorario de Gimnasia'
+    },
+     'mendiburu-elicabe-moler-daniel-eduardo': {
+        src: 'https://www.youtube.com/embed/xgB7ZivEjio?si=rAb9Lz0zEaD4-NT9',
+        title: 'Daniel Eduardo Mendiburu Elicabe Moler | Socio Honorario de Gimnasia'
+    },
+     'mucciolo-scipioni-irene-nelida': {
+        src: 'https://www.youtube.com/embed/Ob0GIS5yx7o?si=d-4nSFZzewxkmNOd',
+        title: 'Irene Nelida Mucciolo Scipioni | Socia Honorario de Gimnasia'
+    },
+    'munitis-orione-luis': {
+        src: 'https://www.youtube.com/embed/Kshvi-aAkMc?si=tae3-kA-XsE6jl2y',
+        title: 'Luis Munitis Orione | Socio Honorario de Gimnasia'
+    },
+     'noriega-beltrame-mario-luis': {
+        src: 'https://www.youtube.com/embed/Vgg8nbVE-pM?si=KvbtOfkqoM_zk4YL',
+        title: 'Mario Luis Noriega Beltrame | Socio Honorario de Gimnasia'
+    },
+     'ogando-gibello-gustavo-ruben': {
+        src: 'https://www.youtube.com/embed/WDVDoc9ay_g?si=RNFK-tmqUPQtd5De',
+        title: 'Gustavo Ruben Ogando Gibello | Socio Honorario de Gimnasia'
+    },
+    'pascua-cruz-otilio-julio': {
+        src: 'https://www.youtube.com/embed/-tQvaZnDpK0?si=ISNvcdao8tJwL6HL',
+        title: 'Otilio Julio Pascua Cruz | Socio Honorario de Gimnasia'
+    },
+     'pereira-rossi-biscayart-eduardo-daniel': {
+        src: 'https://www.youtube.com/embed/BBxa0IiFx5M?si=xYOnb25e2Q25BSop',
+        title: 'Eduardo Daniel Pereira Rossi Biscayart | Socio Honorario de Gimnasia'
+    },
+     'piovoso-mengarelli-antonio-enrique': {
+        src: 'https://www.youtube.com/embed/RjeDp7QucdI?si=bVEi5JV3WeUsdwg_',
+        title: 'Antonio Enrique Piovoso Mengarelli | Socio Honorario de Gimnasia'
+    },
+     'racero-pereda-daniel-alberto': {
+        src: 'https://www.youtube.com/embed/y4u1szBA6S0?si=sSBmmBC3mnkEn9F-',
+        title: 'Daniel Alberto Racero Pereda | Socio Honorario de Gimnasia'
+    },
+    'rave-rivas-ricardo-arturo': {
+        src: 'https://www.youtube.com/embed/Gnlbdo-TygQ?si=iwssJFPzXOYz4Ofh',
+        title: 'Ricardo Arturo Rave Rivas | Socio Honorario de Gimnasia'
+    },
+     'raverta-gorostiague-maria-ines': {
+        src: 'https://www.youtube.com/embed/XWLDtgOm000?si=J9ZVd24RiopIO5cr',
+        title: 'Maria Ines Raverta Gorostiague | Socia Honorario de Gimnasia'
+    },
+     'revoledo-mario-horacio': {
+        src: 'https://www.youtube.com/embed/ID-OV8U4kN8?si=6Uq6N5ep-yTN_Nqi',
+        title: 'Mario Horacio Revoledo | Socio Honorario de Gimnasia'
+    },
+     'rivelli-branda-horacio-omar': {
+        src: 'https://www.youtube.com/embed/y0b1dgXy4JY?si=Ap1yKxMwv1VNd8rW',
+        title: 'Horacio Omar Rivelli Branda | Socio Honorario de Gimnasia'
+    },
+    'rivelli-armendariz-roberto-abel': {
+        src: 'https://www.youtube.com/embed/y0b1dgXy4JY?si=Ap1yKxMwv1VNd8rW',
+        title: 'Roberto Abel Rivelli Armendariz | Socio Honorario de Gimnasia'
+    },
+     'rocamora-perilli-roberto-antonio': {
+        src: 'https://www.youtube.com/embed/m26n0L0H654?si=KvSghmvhfgXDzcuv',
+        title: 'Roberto Antonio Rocamora Perilli | Socio Honorario de Gimnasia'
+    },
+     'rodriguez-ceballos-justo-gregorio': {
+        src: 'https://www.youtube.com/embed/esHYLJfg1As?si=VsXmPwOjs7CJKeDI',
+        title: 'Justo Gregorio Rodriguez Ceballos | Socio Honorario de Gimnasia'
+    },
+     'rusconi-lencina-enrique-oscar': {
+        src: 'https://www.youtube.com/embed/PXr98wXYZAs?si=TRQ7ojjg1qzJCbmu',
+        title: 'Enrique Oscar Rusconi Lencina | Socio Honorario de Gimnasia'
+    },
+    'sanchez-santillan-miguel-benancio': {
+        src: 'https://www.youtube.com/embed/yD83Tfmb4AA?si=tiXOHbGEuPu7pH0b',
+        title: 'Miguel Benancio Sanchez Santillan | Socio Honorario de Gimnasia'
+    },
+     'scaccheri-butler-jose-alberto': {
+        src: 'https://www.youtube.com/embed/5m7bAa0r0bo?si=bgd3TqKQapyIDJrD',
+        title: 'Jose Alberto Scaccheri Butler | Socio Honorario de Gimnasia'
+    },
+     'tello-biscayart-pablo-daniel': {
+        src: 'https://www.youtube.com/embed/BBxa0IiFx5M?si=reuhYgIeB7NZeACO',
+        title: 'Pablo Daniel Tello Biscayart | Socio Honorario de Gimnasia'
+    },
+     'tello-biscayart-rafael-arnaldo': {
+        src: 'https://www.youtube.com/embed/BBxa0IiFx5M?si=reuhYgIeB7NZeACO',
+        title: 'Rafael Arnaldo Tello Biscayart | Socio Honorario de Gimnasia'
+    },
+    'tierno-franco-patricio-blas': {
+        src: 'https://www.youtube.com/embed/aEzVGm-9aM8?si=WbHUdaKjeB7q6WhD',
+        title: 'Franco Patricio Blas Tierno | Socio Honorario de Gimnasia'
+    },
+    'torres-ferrer-millan-luis-eduardo': {
+        src: 'https://www.youtube.com/embed/IgMrFC7IrqU?si=UnVLq68lsFUO2dV4',
+        title: 'Luis Eduardo Torres Ferrer Millan | Socio Honorario de Gimnasia'
+    },
+    'zuppa-rapacini-nestor-oscar': {
+        src: 'https://www.youtube.com/embed/rx77zeZILks?si=cYdLjhbqGoVqFgMa',
+        title: 'Nestor Oscar Zuppa Rapacini | Socio Honorario de Gimnasia'
+    }
+};
+
+fetch('biografias.json')
+  .then(r => r.json())
+  .then(personas => {
+    const p = personas.find(x => x.id === id);
+        const indiceActual = personas.findIndex(x => x.id === id);
+    if (!p) {
+      document.getElementById('detalle-container').innerHTML = '<p>Biografía no encontrada.</p>';
+      return;
+    }
+
+        const biografiaAnterior = indiceActual > 0 ? personas[indiceActual - 1] : null;
+        const biografiaSiguiente = indiceActual < personas.length - 1 ? personas[indiceActual + 1] : null;
+
+        const navHtml = `
+            <nav class="bio-nav" aria-label="Navegación entre biografías">
+                ${construirLinkNavegacion(biografiaAnterior, 'Ver biografía anterior')}
+                ${construirLinkNavegacion(biografiaSiguiente, 'Ver siguiente biografía')}
+            </nav>
+        `;
+
+        const video = videosPorId[p.id];
+        const videoHtml = video && video.src
+            ? `<section class="playlist-section">
+                    <iframe class="bio-video-embed" src="${video.src}" title="${video.title || p.nombre}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </section>`
+            : '';
+    
+    document.getElementById('detalle-container').innerHTML = `
+      <div class="bio-header">
+        <div class="bio-top">
+          <img src="${p.foto}" alt="${p.nombre}" class="bio-img">
+          <div class="bio-info">
+            <div id="bio-id"><strong>${p.nombre}</strong></div>
+            <div id="bio-subtitulo">${p.subtitulo || ''}</div>
+          </div>
+        </div>
+        <div id="bio-texto">${p.texto}</div>
+                ${videoHtml}
+            ${navHtml}
+      </div>
+    `;
+
+    const fotoBio = document.querySelector('.bio-img');
+    fotoBio.tabIndex = 0;
+    fotoBio.setAttribute('role', 'button');
+    fotoBio.setAttribute('aria-label', `Ampliar fotografía de ${p.nombre}`);
+    const abrirFoto = () => {
+        fotoCompleta.src = fotoBio.src;
+        fotoCompleta.alt = p.nombre;
+        visorFoto.showModal();
+        document.getElementById('bio-image-close').focus();
+    };
+    fotoBio.addEventListener('click', abrirFoto);
+    fotoBio.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            abrirFoto();
+        }
+    });
+
+    aplicarGlosario();
+  })
+  .catch(err => console.error(err));
+</script>
+
+<footer>
+                                <div class="footer-line"></div>
+                                <div class="footer-content">
+                                        <img src="recursos\ddhh.png" alt="Logo"
+                                                class="footer-logo" />
+                                        <div class="social-icons">
+                                                <a href="https://www.instagram.com/subcomisionddhhcge/"
+                                                        aria-label="Instagram"
+                                                        class="icon instagram"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer">
+                                                        <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                fill="#242750"
+                                                                viewBox="0 0 24 24"
+                                                                width="24"
+                                                                height="24">
+                                                                <path
+                                                                        d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm4.5-2.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+                                                        </svg>
+                                                </a>
+                                                <a href="https://www.youtube.com/@subcomisionderechoshumanos3840" aria-label="YouTube"
+                                                        class="icon youtube"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer">
+                                                        <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                fill="#242750"
+                                                                viewBox="0 0 24 24"
+                                                                width="24"
+                                                                height="24">
+                                                                <path
+                                                                        d="M19.8 7.2a2.41 2.41 0 0 0-1.7-1.7C16.5 5 12 5 12 5s-4.5 0-6.1.5a2.41 2.41 0 0 0-1.7 1.7A25.42 25.42 0 0 0 4 12a25.42 25.42 0 0 0 .2 4.8 2.41 2.41 0 0 0 1.7 1.7c1.6.5 6.1.5 6.1.5s4.5 0 6.1-.5a2.41 2.41 0 0 0 1.7-1.7A25.42 25.42 0 0 0 20 12a25.42 25.42 0 0 0-.2-4.8zM10 15.5v-7l6 3.5-6 3.5z" />
+                                                        </svg>
+                                                </a>
+                                        </div>
+                                </div>
+
+                        </footer>
+</body>
+</html>
