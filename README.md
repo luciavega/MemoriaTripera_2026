@@ -78,4 +78,4 @@
 75) Ricardo Osvaldo Vega Ferretti
 =======
 # MemoriaTripera_2026
->>>>>>> 75cae27c2012fcd059ad0d013ea4e974a5837f59
+
